@@ -1,4 +1,4 @@
-SlideGallery
+ScreenGallery
 ===========
 
 A MooTools plugin that displays a fullscreen picture gallery with slideshow functionality.
