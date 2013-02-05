@@ -1,7 +1,7 @@
 /*
 ---
 
-name: Slidegallery
+name: ScreenGallery
 
 description: Fullscreen gallery and slideshow library for MooTools
 
@@ -412,32 +412,32 @@ SlideGallery = new Class({
         that.fireEvent('after-slide', [vars.activeSlide, vars.curIndex, vars.length]);
 
         // Release lock set in _slide()
-        that.callStack();
+        that.releaseStackLock();
     },
 
     _resizeListener: (function() {
         var img, iSize, iRatio, cSize, mSize, imgX, imgY, resizeX = function(checkMin) {
-                if (checkMin) {
-                    var checkY = mSize.x * iRatio;
-                    if (cSize.y <= checkY) setSize(mSize.x, checkY);
-                    else resizeY();
-                } else setSize(cSize.x, cSize.x * iRatio);
-            },
-            resizeY = function(checkMin) {
-                if (checkMin) {
-                    var checkX = mSize.y / iRatio;
-                    if (cSize.x <= checkX) setSize(checkX, mSize.y);
-                    else resizeX();
-                } else setSize(cSize.y / iRatio, cSize.y);
-            },
-            setSize = function(x, y) {
-                imgX = x;
-                imgY = y;
-                img.setStyles({
-                    'width': x,
-                    'height': y
-                });
-            };
+            if (checkMin) {
+                var checkY = mSize.x * iRatio;
+                if (cSize.y <= checkY) setSize(mSize.x, checkY);
+                else resizeY();
+            } else setSize(cSize.x, cSize.x * iRatio);
+        },
+        resizeY = function(checkMin) {
+            if (checkMin) {
+                var checkX = mSize.y / iRatio;
+                if (cSize.x <= checkX) setSize(checkX, mSize.y);
+                else resizeX();
+            } else setSize(cSize.y / iRatio, cSize.y);
+        },
+        setSize = function(x, y) {
+            imgX = x;
+            imgY = y;
+            img.setStyles({
+                'width': x,
+                'height': y
+            });
+        };
 
         return function(element, noPerformance) {
             var that = this,
