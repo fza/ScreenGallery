@@ -32,7 +32,6 @@ SlideGallery = new Class({
         verticalCenter: true,
 
         fadeOnReady: true,
-        protect: true,
         performance: 'optimize',
         performanceDelay: 50,
 
@@ -81,13 +80,14 @@ SlideGallery = new Class({
 
         that.registerSyncMethods(['setPictures', 'slideTo', '_load', '_imageListener']);
 
+        vars.list = new Element('ul');
+
         galleryContainer = vars.container = new Element('div', {
             id: opts.containerElementId,
             styles: {
                 visibility: 'hidden'
             }
-        }).inject($(container || document.body));
-        vars.list = new Element('ul').inject(galleryContainer);
+        }).grab(vars.list).inject($(container || document.body));
 
         ['resize', 'orientationchange'].each(function(evt) {
             window.addListener(evt, this._resizeListener.pass([]));
@@ -244,7 +244,6 @@ SlideGallery = new Class({
             that.fireEvent('ready');
 
             if (opts.fadeOnReady && opts.readyFadeDuration > 0)(new Fx.Tween(vars.container, {
-                fps: 'animationFrame',
                 duration: opts.readyFadeDuration
             })).start('opacity', 0, 1);
             else vars.container.setStyle('visibility', 'visible');
@@ -313,7 +312,6 @@ SlideGallery = new Class({
 
         case 'load':
             img = slide.getFirst('img');
-            if (that.options.protect) img.enableProtection();
             slide.removeClass('slide-loading');
 
             if (!vars.ready && slide.retrieve('slide-num') == 0) that._launch(slide);
@@ -355,7 +353,7 @@ SlideGallery = new Class({
             opts = that.options,
             prevSlide, currentSlide, remainOffsetPixels, startX, noFx;
 
-        if (!newSlide || !vars.nextSlide || !newSlide.getParent() || !vars.nextSlide.getParent() || vars.nextSlide != newSlide || vars.activeSlide == newSlide || newSlide.hasClass('slide-pending') || !that.checkStack(arguments)) return;
+        if (!newSlide || !vars.nextSlide || !newSlide.getParent() || vars.nextSlide != newSlide || vars.activeSlide == newSlide || newSlide.hasClass('slide-pending') || !that.checkStack('_slide', arguments)) return;
 
         prevSlide = vars.list.getChildren('li.slide-prev')[0], currentSlide = vars.list.getChildren('li.slide-active')[0], remainOffsetPixels = vars.container.getSize().x * (opts.remainOffsetPercent / 100), startX = vars.nextSlideMode == 'prev' ? -remainOffsetPixels : remainOffsetPixels, noFx = vars.nextSlideNoFx;
 
@@ -416,7 +414,8 @@ SlideGallery = new Class({
     },
 
     _resizeListener: (function() {
-        var img, iSize, iRatio, cSize, mSize, imgX, imgY, resizeX = function(checkMin) {
+        var img, iSize, iRatio, cSize, mSize, imgX, imgY,
+        resizeX = function(checkMin) {
             if (checkMin) {
                 var checkY = mSize.x * iRatio;
                 if (cSize.y <= checkY) setSize(mSize.x, checkY);
